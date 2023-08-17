@@ -1,0 +1,14 @@
+<div class="container">
+  <h2>CV Detay</h2> 
+  <div class="card">
+    <div class="card-body" *ngIf="cv"> 
+        <h5 class="card-title">{{ cv.name }} {{ cv.surname }}</h5>
+        <p class="card-text">{{ cv.description }}</p>
+        <p class="card-text">Yaş: {{ cv.year }}</p>
+        <p class="card-text">Doğum Tarihi: {{ cv.birthDate }}</p>
+        <p class="card-text">Doğum Yeri: {{ cv.placeOfBirth }}</p>
+        <p class="card-text">Yetenekler: {{ cv.skills.join(", ") }}</p>
+      </div> 
+  </div>
+  <button (click)="goBack()">Geri</button>
+</div>

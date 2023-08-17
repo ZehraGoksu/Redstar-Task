@@ -1,0 +1,33 @@
+<a routerLink="/cvs" routerLinkActive="active">CV Listesi</a>
+<form>
+    <label for="name">Ad</label>
+    <input type="text" id="name" [(ngModel)]="name"  [ngModelOptions]="{ standalone: true }"><br><br>
+    
+    <label for="surname">Soyad</label>
+    <input type="text" id="surname" [(ngModel)]="surname"  [ngModelOptions]="{ standalone: true }"><br><br>
+    
+    <label for="year">Yaş</label>
+    <input type="number" id="year" [(ngModel)]="year"  [ngModelOptions]="{ standalone: true }"><br><br>
+    
+    <label for="birthDate">Doğum Tarihi</label>
+    <input type="date" id="birthDate" [(ngModel)]="birthDate"  [ngModelOptions]="{ standalone: true }"><br><br>
+    
+    <label for="placeOfBirth">Doğum Yeri</label>
+    <input type="number" id="placeOfBirth" [(ngModel)]="placeOfBirth"  [ngModelOptions]="{ standalone: true }"><br><br>
+     
+    <label for="skills">Yetenekler</label>
+    <textarea id="skills" [(ngModel)]="skills"  [ngModelOptions]="{ standalone: true }"></textarea><br><br>
+    
+    <label for="description">Açıklama</label>
+    <textarea id="description" [(ngModel)]="description"  [ngModelOptions]="{ standalone: true }"></textarea><br><br>
+    
+
+    <!--  İlçe il için deneme
+    <div *ngIf="responseData">
+        <h2>API Response Data:</h2>
+        <pre>{{ responseData | json }}</pre>
+      </div>
+    -->
+    <button (click)="saveCV()">Kaydet</button>
+  </form>
+  

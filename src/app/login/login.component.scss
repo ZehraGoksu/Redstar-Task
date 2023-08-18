@@ -11,7 +11,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  width: 100%;
+  width: 100%; 
   box-sizing: border-box;
 
   .row {
@@ -23,8 +23,8 @@ body {
   background-color: white;
   padding: 5%;
   border-radius: 8px;
-  box-shadow: 5px;
-  width: 90%;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+  width: 100%;
 }
 
 form {
@@ -39,7 +39,7 @@ form {
   .icon {
     position: absolute;
     top: 50%;
-    left: 10px;
+    left: 15px;
     transform: translateY(-50%);
   }
 
@@ -50,6 +50,6 @@ form {
   .btn {
     border-radius: 25px;
     padding: 10px 50px;
-    background: linear-gradient(to right, #777777, #4d4c4c);
+    background: linear-gradient(to left, #D3EEE7, #C6DDE4);  
   }
 }

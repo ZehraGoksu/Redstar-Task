@@ -1,0 +1,57 @@
+@import "../../styles.scss";
+
+.container {
+    padding: 30px 10px;
+    color:$textColor;
+    
+
+  .title {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    input{
+        border: 1px solid $darkGreen;
+        border-radius: 20px;
+        padding: 8px 20px;
+    }
+  }
+
+  .newCV {
+    display: flex;
+    align-items: center;
+    padding: 5px 15px;
+    border-radius: 20px;
+    box-shadow: 2px 4px 10px rgb(0, 0,0.1);
+    background: $darkGreen;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+
+    .fa-plus {
+      font-size: 19px;
+      font-weight: 600;
+    }
+  }
+
+  ul{
+    padding-left: 0px;
+  }
+
+  .list-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+  }
+
+  .info {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .buttons {
+    gap: 3;
+  }
+}

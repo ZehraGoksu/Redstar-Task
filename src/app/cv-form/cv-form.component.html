@@ -1,33 +1,211 @@
-<a routerLink="/cvs" routerLinkActive="active">CV Listesi</a>
-<form>
-    <label for="name">Ad</label>
-    <input type="text" id="name" [(ngModel)]="name"  [ngModelOptions]="{ standalone: true }"><br><br>
-    
-    <label for="surname">Soyad</label>
-    <input type="text" id="surname" [(ngModel)]="surname"  [ngModelOptions]="{ standalone: true }"><br><br>
-    
-    <label for="year">Yaş</label>
-    <input type="number" id="year" [(ngModel)]="year"  [ngModelOptions]="{ standalone: true }"><br><br>
-    
-    <label for="birthDate">Doğum Tarihi</label>
-    <input type="date" id="birthDate" [(ngModel)]="birthDate"  [ngModelOptions]="{ standalone: true }"><br><br>
-    
-    <label for="placeOfBirth">Doğum Yeri</label>
-    <input type="number" id="placeOfBirth" [(ngModel)]="placeOfBirth"  [ngModelOptions]="{ standalone: true }"><br><br>
-     
-    <label for="skills">Yetenekler</label>
-    <textarea id="skills" [(ngModel)]="skills"  [ngModelOptions]="{ standalone: true }"></textarea><br><br>
-    
-    <label for="description">Açıklama</label>
-    <textarea id="description" [(ngModel)]="description"  [ngModelOptions]="{ standalone: true }"></textarea><br><br>
-    
-
-    <!--  İlçe il için deneme
-    <div *ngIf="responseData">
-        <h2>API Response Data:</h2>
-        <pre>{{ responseData | json }}</pre>
+<div class="container">
+  <div class="formTitle">
+    <a class="btnCvList btn" routerLink="/cvs" routerLinkActive="active"><i class="fa-solid fa-angle-left"></i> CV Listesi</a>
+    <button type="button" class="btn btnPdf" (click)="downloadPDF()">
+      PDF İndir
+    </button>
+  </div>
+  <h2 class="text-center my-4">CV Oluşturma</h2>
+  <div id="pdf-content" class="form-group">
+    <form #cvForm="ngForm">
+      <div class="firstRow">
+        <div class="col-md-6 col-12"></div>
+        <div class="col-md-6 col-12">
+          <label for="description">Açıklama</label>
+          <input
+            class="form-control"
+            type="text"
+            id="description"
+            [(ngModel)]="description"
+            [ngModelOptions]="{ standalone: true }"
+            required
+          />
+          <div *ngIf="surnameInput.invalid && (surnameInput.dirty || surnameInput.touched)"
+            class="error-message"
+          >
+            Açıklama alanı zorunludur.
+          </div>
+          <br /><br />
+        </div>
       </div>
-    -->
-    <button (click)="saveCV()">Kaydet</button>
-  </form>
-  
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <label for="name">Ad</label>
+          <input
+            class="form-control"
+            type="text"
+            id="name"
+            [(ngModel)]="name"
+            [ngModelOptions]="{ standalone: true }"
+            required
+            #nameInput="ngModel"
+          />
+          <div
+          *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)"
+            class="error-message"
+          >
+            Ad alanı zorunludur.
+          </div>
+          <br /><br />
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label for="surname">Soyad</label>
+          <input
+            class="form-control"
+            type="text"
+            id="surname"
+            [(ngModel)]="surname"
+            [ngModelOptions]="{ standalone: true }"
+            required
+            #surnameInput="ngModel"
+          />
+          <div
+          *ngIf="surnameInput.invalid && (surnameInput.dirty || surnameInput.touched)"
+            class="error-message"
+          >
+            Soyad alanı zorunludur.
+          </div>
+          <br /><br />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <label for="title">Unvan</label>
+          <input
+            class="form-control"
+            type="text"
+            id="title"
+            [(ngModel)]="title"
+            [ngModelOptions]="{ standalone: true }"
+            required
+            #titleInput="ngModel"
+          />
+          <div
+          *ngIf="titleInput.invalid && (titleInput.dirty || titleInput.touched)"
+            class="error-message"
+          >
+            Unvan alanı zorunludur.
+          </div>
+          <br /><br />
+        </div>
+        <div class="col-12 col-md-6">
+          <label for="birthDate">Doğum Tarihi</label>
+          <input
+            class="form-control"
+            type="date"
+            id="birthDate"
+            [(ngModel)]="birthDate"
+            [ngModelOptions]="{ standalone: true }"
+            required
+            #birthDateInput="ngModel"
+          />
+          <div *ngIf="birthDateInput.invalid && (birthDateInput.dirty || birthDateInput.touched)"
+            class="error-message"
+          >
+            Doğum tarihi alanı zorunludur.
+          </div>
+          <br /><br />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6 mb-5">
+          <label for="country">Ülke</label>
+          <select
+            class="form-control"
+            id="country"
+            [(ngModel)]="country"
+            [ngModelOptions]="{ standalone: true }"
+            required
+            #countryInput="ngModel"
+          >  
+          <option *ngFor="let country of countries" [value]="country.ulke" [selected]="country.ulke === selectedCountry">{{ country.ulke }}</option>
+
+          </select>
+          <div *ngIf="countryInput.invalid && (countryInput.dirty || countryInput.touched)"
+            class="error-message"
+          >
+            Ülke alanı zorunludur.
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <label for="city">Şehir</label>
+          <select
+            class="form-control"
+            id="city"
+            [(ngModel)]="city"
+            [ngModelOptions]="{ standalone: true }"
+          >
+            <option *ngFor="let city of cities" [value]="city.il">
+              {{ city.il }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <label for="email">E-posta</label>
+      <input
+        class="form-control"
+        type="email"
+        id="email"
+        [(ngModel)]="email"
+        [ngModelOptions]="{ standalone: true }"
+        required
+        #emailInput="ngModel"
+      />
+      <div
+      *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-message"
+      >
+        E-posta alanı zorunludur.
+      </div>
+      <br /><br />
+
+      <label for="education">Eğitim Bilgisi</label>
+      <textarea
+        class="form-control"
+        id="education"
+        [(ngModel)]="education"
+        [ngModelOptions]="{ standalone: true }"
+        required
+        #educationInput="ngModel"
+      >
+          <div *ngIf="educationInput.invalid && (educationInput.dirty || educationInput.touched)"
+            class="error-message"
+          >
+            Eğitim Bilgisi girmek zorunludur.
+          </div> </textarea
+      ><br /><br />
+
+      <label for="experience">İş Deneyimleri</label>
+      <textarea
+        class="form-control"
+        id="experience"
+        [(ngModel)]="experience"
+        [ngModelOptions]="{ standalone: true }"
+        required
+        #experienceInput="ngModel"
+      >
+          <div *ngIf="experienceInput.invalid && (experienceInput.dirty || experienceInput.touched)"
+            class="error-message"
+          >
+            Deneyim alanı zorunludur.
+          </div> </textarea
+      ><br /><br />
+
+      <label for="skills">Yetenekler</label>
+      <textarea
+        class="form-control"
+        id="skills"
+        [(ngModel)]="skills"
+        [ngModelOptions]="{ standalone: true }"
+        required
+        #skillsInput="ngModel"
+      >
+          <div *ngIf="skillsInput.invalid && (skillsInput.dirty || skillsInput.touched)" class="error-message"
+          >
+            Yetenekler alanı zorunludur.
+          </div> </textarea
+      ><br /><br />
+      <button class="btn" (click)="saveCV()" [disabled]="cvForm.invalid">Kaydet</button>
+    </form>
+  </div>
+</div>

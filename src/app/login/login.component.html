@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="loginCard"> 
-            <h2 class="mb-0">Giriş Yap</h2> 
+            <h2 class="mb-0 text-center">Giriş Yap</h2> 
           <div class="">
             <form>
               <div class="form-group"> 
@@ -28,7 +28,7 @@
                   [(ngModel)]="password"
                 />
               </div>
-              <button class="btn my-5" (click)="login()">Giriş</button>
+              <button class="btn mt-5 mb-3" (click)="login()">Giriş</button>
             </form>
             <div class="mt-3" *ngIf="attempts >= 3">
               <div class="alert alert-danger">

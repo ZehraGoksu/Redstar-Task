@@ -1,1 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap");
+
+$mainFont: "Roboto";
+
+$darkGreen: #348a78;
+$lightGreen: #d3eee7;
+$gray: #c6dde4;
+$textColor: #334a51;
+
+* {
+  font-family: $mainFont;
+}
+
+body {
+  background-color: $gray!important;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}

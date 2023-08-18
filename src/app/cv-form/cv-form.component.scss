@@ -1,0 +1,44 @@
+@import "../../styles.scss";
+
+.container {
+  padding: 40px 20px;
+  color: $textColor;
+
+  label{
+    margin-bottom: 5px;
+  }
+
+  .firstRow{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .formTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btn {
+    border-radius: 25px;
+    padding: 10px 50px;
+    background: $darkGreen;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  .btnCvList {
+    padding: 10px 35px;
+    background: $lightGreen;
+    color: $darkGreen;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  .btnPdf{ 
+    padding: 10px 35px;
+    background:  $darkGreen;
+    color:$lightGreen;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}

@@ -1,11 +1,38 @@
 <div class="container">
-    <h2>CV Liste</h2>
-    <div *ngFor="let cv of cvs; let i = index" class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">{{ cv.name }} {{ cv.surname }}</h5>
-        <p class="card-text">{{ cv.description }}</p>
-        <a [routerLink]="['/cv', i]" class="btn btn-primary">View Details</a>
-      </div>
-    </div>
+  <h2 class="text-center">CV Listesi</h2>
+  <div class="title">
+    <input
+      type="text"
+      (input)="search($any($event.target).value)"
+      placeholder="Arama.."
+    />
+    <button type="button" class="btn newCV" routerLink="/cv" routerLinkActive="active">
+      <i class="fa-regular fa-plus me-2"></i> Yeni
+    </button>
   </div>
-  
+  <ul *ngIf="filteredCVs.length > 0; else noCVs">
+    <li *ngFor="let cv of filteredCVs; let i = index" class="card mb-3">
+      <div class="list-card">
+        <h5>{{ cv.name }} {{ cv.surname }}</h5>
+        <div class="info col-7">
+          <p class="card-text">{{ cv.description }}</p>
+
+          <div class="buttons"> 
+            <a href="#" class="btn" [routerLink]="['/edit-cv', i]">
+              <i class="fa-regular fa-pen-to-square"></i>
+            </a>
+            <a href="#" class="btn">
+              <i class="fa-regular fa-file-pdf"></i>
+            </a>
+            <a class="btn">
+              <i class="fa-regular fa-trash-can" (click)="confirmDelete(i)"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <ng-template #noCVs>
+    <p class="text-center text-white">Herhangi bir CV bulunamamıştır.</p>
+  </ng-template>
+</div>

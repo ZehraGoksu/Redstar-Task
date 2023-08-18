@@ -6,11 +6,24 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl: string = 'https://napi.sevkiyatvar.com/ulke'; // API URL'si
+  private apiCountyUrl: string = 'https://napi.sevkiyatvar.com/ulke';  
+  private apiCityUrl: string = 'https://napi.sevkiyatvar.com/il';  
 
   constructor(private http: HttpClient) {}
 
-  getSomeData(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}`);
+  getCountryData(): Observable<any> {
+    return this.http.get<any>(`${this.apiCountyUrl}`);
+  }
+
+  postCountryData(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiCountyUrl}`, data);
+  }
+
+  getCityData(): Observable<any> {
+    return this.http.get<any>(`${this.apiCityUrl}`);
+  }
+
+  postCityData(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiCityUrl}`, data);
   }
 }

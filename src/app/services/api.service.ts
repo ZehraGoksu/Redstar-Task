@@ -23,7 +23,8 @@ export class ApiService {
     return this.http.get<any>(`${this.apiCityUrl}`);
   }
 
-  postCityData(data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiCityUrl}`, data);
+  postCityData(countryId: any): Observable<any> {
+    const data = { ulke: countryId };  
+  return this.http.post<any[]>(this.apiCityUrl, data); 
   }
 }

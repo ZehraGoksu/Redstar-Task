@@ -18,10 +18,10 @@
           <p class="card-text">{{ cv.description }}</p>
 
           <div class="buttons"> 
-            <a href="#" class="btn" [routerLink]="['/edit-cv', i]">
+            <a class="btn" [routerLink]="['/edit-cv', i]" [state]="cv">
               <i class="fa-regular fa-pen-to-square"></i>
             </a>
-            <a href="#" class="btn">
+            <a class="btn" (click)="downloadPDF(cv)">
               <i class="fa-regular fa-file-pdf"></i>
             </a>
             <a class="btn">

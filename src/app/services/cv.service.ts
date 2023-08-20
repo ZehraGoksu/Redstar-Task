@@ -5,13 +5,26 @@ import { jsPDF } from 'jspdf';
   providedIn: 'root',
 })
 export class CvService {
-  constructor() {}
+  constructor() {} 
+ 
+
+  getCVs(): any[] {
+    return JSON.parse(localStorage.getItem('userCVs') || '[]');
+  }
+
+
+  getCVById(id: number): any {
+    const storedCVs = JSON.parse(localStorage.getItem('userCVs') || '[]');
+    return storedCVs[id];//storedCVs.find((cv: any) => cv.id === id);
+  }
+
 
   saveCV(cv: any): void {
     const storedCVs = JSON.parse(localStorage.getItem('userCVs') || '[]');
     storedCVs.push(cv);
     localStorage.setItem('userCVs', JSON.stringify(storedCVs));
   }
+
 
   updateCV(index: number, updatedCV: any): void {
     const storedCVs = JSON.parse(localStorage.getItem('userCVs') || '[]');
@@ -22,6 +35,7 @@ export class CvService {
     }
   }
 
+
   deleteCV(index: number): void {
     const storedCVs = JSON.parse(localStorage.getItem('userCVs') || '[]');
 
@@ -31,18 +45,11 @@ export class CvService {
     }
   }
 
-  getCVs(): any[] {
-    return JSON.parse(localStorage.getItem('userCVs') || '[]');
-  }
 
-  getCVById(id: number): any {
-    const storedCVs = JSON.parse(localStorage.getItem('userCVs') || '[]');
-    return storedCVs.find((cv: any) => cv.id === id);
-  }
-
-  generatePDFFromFormData(formData: any, fileName: string): void {
+  generatePDFFromFormData(formData: any, fileName: string,uploadedImage?: string): void {
     const pdf = new jsPDF();
-
+ 
+    
     pdf.text(`Ad: ${formData.name}`, 10, 10);
     pdf.text(`Soyad: ${formData.surname}`, 10, 20);
     pdf.text(`Unvan: ${formData.title}`, 10, 30);
@@ -53,8 +60,12 @@ export class CvService {
     pdf.text(`Egitim: ${formData.education}`, 10, 80);
     pdf.text(`Deneyimler: ${formData.experience}`, 10, 90);
     pdf.text(`Yetenekler: ${formData.skills}`, 10, 100);
-    pdf.text(`Açıklama: ${formData.description}`, 10, 110);
-
+    pdf.text(`Açiklama: ${formData.description}`, 10, 110);
+    if (uploadedImage) {
+      const imgWidth = 80;
+      const imgHeight = 80;
+      pdf.addImage(uploadedImage, 'JPEG', 10, 120, imgWidth, imgHeight);
+    }
     pdf.save(fileName); // PDF'i indirme
   }
 }

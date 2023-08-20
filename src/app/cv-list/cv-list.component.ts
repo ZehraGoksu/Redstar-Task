@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CvService } from '../services/cv.service';
+import { AlertService } from '../services/alert.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,7 +13,7 @@ export class CvListComponent implements OnInit {
   cvs: any[] = [];
   filteredCVs: any[] = [];
 
-  constructor(private cvService: CvService, private router: Router) {}
+  constructor(private cvService: CvService, private router: Router,private alertService:AlertService) {}
 
   ngOnInit() {
     this.loadCV();
@@ -24,12 +25,9 @@ export class CvListComponent implements OnInit {
   }
 
   editCV(index: number) {
-    // Düzenlenecek CV'nin verileri
-    const cvToEdit = this.cvService.getCVs()[index];
-
-    // Edit formuna yönlendirme
-    this.router.navigate(['/edit-cv', index], { state: cvToEdit });
+    this.router.navigate(['/edit-cv', index]);
   }
+  
   search(keyword: string) {
     if (!keyword) {
       this.filteredCVs = [...this.cvs]; // Kelime yoksa tüm CVs
@@ -43,11 +41,32 @@ export class CvListComponent implements OnInit {
         cv.description.toLowerCase().includes(keyword.toLowerCase())
     );
   }
+
   confirmDelete(index: number) {
     const isConfirmed = confirm("Bu CV'yi silmek istediğinize emin misiniz?");
     if (isConfirmed) {
       this.cvService.deleteCV(index);
       this.loadCV();
+      this.alertService.showAlert('success', "CV'niz başarılı bir şekilde silindi!"); 
     }
+  }
+  
+  downloadPDF(cv: any) {
+    const formData = {
+      name: cv.name,
+      surname: cv.surname,
+      title: cv.title,
+      birthDate: cv.birthDate,
+      country: cv.country,
+      city: cv.city,
+      email: cv.email,
+      education: cv.education,
+      experience: cv.experience,
+      skills: cv.skills,
+      description: cv.description,
+    };
+    const fileName = `${cv.name}_${cv.surname}_cv.pdf`;
+
+    this.cvService.generatePDFFromFormData(formData, fileName);
   }
 }

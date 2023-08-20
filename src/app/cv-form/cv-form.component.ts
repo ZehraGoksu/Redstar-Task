@@ -1,7 +1,9 @@
-import { Component, OnInit ,ViewEncapsulation} from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CvService } from '../services/cv.service';
 import { ApiService } from '../services/api.service';
+import { AlertService } from '../../app/services/alert.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-cv-form',
@@ -12,122 +14,291 @@ import { ApiService } from '../services/api.service';
 export class CvFormComponent implements OnInit {
   index!: number;
   cv: any = {};
-  selectedCountry: any = {};
+  selectedCountry: any = null;
   countries: any[] = [];
   cities: any[] = [];
+  isNewCV: boolean = true;
 
-  name: string = '';
-  surname: string = '';
-  title: string = '';
-  birthDate: Date = new Date();
-  country: string = '';
-  city: string = '';
-  email: string = '';
-  education: string = '';
-  experience: string = '';
-  skills: string = '';
-  description: string = '';
+  uploadedImage: string | null = null;
 
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
     private router: Router,
-    private cvService: CvService
+    private cvService: CvService,
+    private alertService: AlertService,
+    private formBuilder: FormBuilder
   ) {}
 
+  formControls: any = {
+    uploadedImage: [''],
+    name: [
+      '',
+      Validators.compose([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50),
+      ]),
+    ],
+    surname: [
+      '',
+      Validators.compose([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50),
+      ]),
+    ],
+    title: [
+      '',
+      Validators.compose([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50),
+      ]),
+    ],
+    birthDate: ['', Validators.required],
+    country: ['', Validators.required],
+    city: [''],
+    email: ['', Validators.compose([Validators.required, Validators.email])],
+    education: [
+      '',
+      Validators.compose([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50),
+      ]),
+    ],
+    experience: [
+      '',
+      Validators.compose([Validators.required, Validators.maxLength(50)]),
+    ],
+    skills: [
+      '',
+      Validators.compose([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50),
+      ]),
+    ],
+    description: [
+      '',
+      Validators.compose([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50),
+      ]),
+    ],
+  };
+
+  cvForm: FormGroup = this.formBuilder.group(this.formControls);
+
+
+  getFormControlName(name: string) {
+    return this.cvForm.get(name);
+  }
+
+  getFormControlSurname(name: string) {
+    return this.cvForm.get(name);
+  }
+
+  getFormControlTitle(title: string) {
+    return this.cvForm.get(title);
+  }
+
+  getFormControlBirthday(birthDate: string) {
+    return this.cvForm.get(birthDate);
+  }
+
+  getFormControlCountry(country: string) {
+    return this.cvForm.get(country);
+  }
+
+  getFormControlEmail(email: string) {
+    return this.cvForm.get(email);
+  }
+
+  getFormControlEducation(education: string) {
+    return this.cvForm.get(education);
+  }
+
+  getFormControlSkills(skills: string) {
+    return this.cvForm.get(skills);
+  }
+
+  getFormControlExperience(experience: string) {
+    return this.cvForm.get(experience);
+  }
+
+  getFormControlDescription(description: string) {
+    return this.cvForm.get(description);
+  }
+
   ngOnInit(): void {
-    
+
     this.apiService.postCountryData({}).subscribe((response) => {
       this.countries = response;
+      if (this.isNewCV) {
+        this.cvForm.get('country')?.setValue('Türkiye');
+        this.apiService
+          .postCityData(this.cvForm.get('country')?.value)
+          .subscribe((response) => {
+            this.cities = response;
+          });
+      }
     });
 
-    this.apiService.postCityData({}).subscribe((response) => {
-      this.cities = response;
-    });
+
     this.route.paramMap.subscribe((params) => {
       const idParam = params.get('index');
       if (idParam !== null) {
         this.index = +idParam;
         this.loadCV();
+        this.isNewCV = false; 
       } else {
-        this.cv = {};
-        this.selectedCountry = this.countries[203];
+        this.selectedCountry = this.countries;
+        this.uploadedImage="https://placehold.co/200x200";
       }
-      // State verisini kontrol et
-      const cvToEdit = history.state;
-      if (cvToEdit) {
-        this.cv = cvToEdit;
-        this.name = cvToEdit.name;
-        this.surname = cvToEdit.surname;
-        this.title = cvToEdit.title;
-        this.birthDate = cvToEdit.birthDate;
-        this.country = cvToEdit.country;
-        this.city = cvToEdit.city;
-        this.email = cvToEdit.email;
-        this.education = cvToEdit.education;
-        this.experience = cvToEdit.experience;
-        this.skills = cvToEdit.skills;
-        this.description = cvToEdit.description;
-      }
+
+     
     });
+ 
+
+  }
+
+
+  onCountrySelected(): void {
+    this.loadCitiesForSelectedCountry();
+  }
+
+
+  onFileSelected(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const file = inputElement.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+       
+      
+        var uploadedImage = e.target?.result as string;
+        this.uploadedImage = uploadedImage
+        this.cvForm.get('uploadedImage')?.setValue(uploadedImage); 
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  openFileInput(): void {
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  loadCitiesForSelectedCountry(): void {
+    if (this.selectedCountry) {
+      this.apiService
+        .postCityData({ countryId: this.selectedCountry })
+        .subscribe({
+          next: (data) => {
+            this.cities = data;
+          },
+          error: (error) => {
+            console.error('Hata! Şehir verileri çekilemedi:', error);
+          },
+        });
+    }
   }
 
   loadCV(): void {
     this.cv = this.cvService.getCVById(this.index);
+   this.uploadedImage= this.cv.uploadedImage;
     if (this.cv) {
-      this.name = this.cv.name;
-      this.surname = this.cv.surname;
-      this.title = this.cv.title;
-      this.birthDate = this.cv.birthDate;
-      this.country = this.cv.country;
-      this.city = this.cv.city;
-      this.email = this.cv.email;
-      this.education = this.cv.education;
-      this.experience = this.cv.experience;
-      this.skills = this.cv.skills;
-      this.description = this.cv.description;
+      this.cvForm.patchValue({
+        uploadedImage: this.cv.uploadedImage,
+        name: this.cv.name,
+        surname: this.cv.surname,
+        title: this.cv.title,
+        birthDate: this.cv.birthDate,
+        country: this.cv.country,
+        city: this.cv.city,
+        email: this.cv.email,
+        education: this.cv.education,
+        experience: this.cv.experience,
+        skills: this.cv.skills,
+        description: this.cv.description,
+      });
     }
   }
 
   saveCV() {
     const cv = {
-      name: this.name,
-      surname: this.surname,
-      title: this.title,
-      birthDate: this.birthDate,
-      country: this.country,
-      city: this.city,
-      email: this.email,
-      education: this.education,
-      experience: this.experience,
-      skills: this.skills,
-      description: this.description,
+      uploadedImage: this.cvForm.get('uploadedImage')?.value,
+      name: this.cvForm.get('name')?.value,
+      surname: this.cvForm.get('surname')?.value,
+      title: this.cvForm.get('title')?.value,
+      birthDate: this.cvForm.get('birthDate')?.value,
+      country: this.cvForm.get('country')?.value,
+      city: this.cvForm.get('city')?.value,
+      email: this.cvForm.get('email')?.value,
+      education: this.cvForm.get('education')?.value,
+      experience: this.cvForm.get('experience')?.value,
+      skills: this.cvForm.get('skills')?.value,
+      description: this.cvForm.get('description')?.value,
     };
 
+    localStorage.removeItem('uploadedImage');
     this.cvService.saveCV(cv);
-    alert('CV kaydedildi!');
+    this.alertService.showAlert('success', 'CV kaydedildi!');
+    this.router.navigate(['/cvs']);
   }
 
   updateCV(): void {
-    this.cvService.updateCV(this.index, this.cv); 
+    const updatedCV = {
+      uploadedImage: this.uploadedImage,
+      name: this.cvForm.get('name')?.value,
+      surname: this.cvForm.get('surname')?.value,
+      title: this.cvForm.get('title')?.value,
+      birthDate: this.cvForm.get('birthDate')?.value,
+      country: this.cvForm.get('country')?.value,
+      city: this.cvForm.get('city')?.value,
+      email: this.cvForm.get('email')?.value,
+      education: this.cvForm.get('education')?.value,
+      experience: this.cvForm.get('experience')?.value,
+      skills: this.cvForm.get('skills')?.value,
+      description: this.cvForm.get('description')?.value,
+    };
+    
+    this.cvService.updateCV(this.index, updatedCV);
+    this.alertService.showAlert('success', 'CV güncellendi!');
+    this.router.navigate(['/cvs']);
   }
 
   downloadPDF() {
     const formData = {
-      name: this.name,
-      surname: this.surname,
-      title: this.title,
-      birthDate: this.birthDate,
-      country: this.country,
-      city: this.city,
-      email: this.email,
-      education: this.education,
-      experience: this.experience,
-      skills: this.skills,
-      description: this.description,
+      uploadedImage: this.cvForm.get('uploadedImage')?.value,
+      name: this.cvForm.get('name')?.value,
+      surname: this.cvForm.get('surname')?.value,
+      title: this.cvForm.get('title')?.value,
+      birthDate: this.cvForm.get('birthDate')?.value,
+      country: this.cvForm.get('country')?.value,
+      city: this.cvForm.get('city')?.value,
+      email: this.cvForm.get('email')?.value,
+      education: this.cvForm.get('education')?.value,
+      experience: this.cvForm.get('experience')?.value,
+      skills: this.cvForm.get('skills')?.value,
+      description: this.cvForm.get('description')?.value,
     };
-    const fileName = 'cv.pdf';
+    const fileName = `${this.cv.name}_${this.cv.surname}_cv.pdf`;
 
-    this.cvService.generatePDFFromFormData(formData, fileName);
+    if (formData.uploadedImage !== null) {
+      this.cvService.generatePDFFromFormData(
+        formData,
+        fileName,
+        formData.uploadedImage
+      );
+    } else {
+      this.cvService.generatePDFFromFormData(formData, fileName, '');
+    }
   }
 }

@@ -1,0 +1,16 @@
+<div class="modal-body">
+  <div [class]="'alert alert-' + type">
+    <ng-container *ngIf="type === 'success'; else errorOrWarningIcon">
+      <i class="fa fa-check-circle"></i> <!-- Success icon -->
+    </ng-container>
+    <ng-template #errorOrWarningIcon>
+      <ng-container *ngIf="type === 'danger'">
+        <i class="fa fa-exclamation-circle"></i> <!-- Error icon -->
+      </ng-container>
+      <ng-container *ngIf="type === 'warning'">
+        <i class="fa fa-exclamation-triangle"></i> <!-- Warning icon -->
+      </ng-container>
+    </ng-template>
+    {{ message }}
+  </div>
+</div>

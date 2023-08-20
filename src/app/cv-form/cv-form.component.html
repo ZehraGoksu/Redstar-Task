@@ -1,211 +1,151 @@
 <div class="container">
   <div class="formTitle">
-    <a class="btnCvList btn" routerLink="/cvs" routerLinkActive="active"><i class="fa-solid fa-angle-left"></i> CV Listesi</a>
-    <button type="button" class="btn btnPdf" (click)="downloadPDF()">
+    <a class="btnCvList btn" routerLink="/cvs" routerLinkActive="active"><i class="fa-solid fa-angle-left"></i> CV
+      Listesi</a>
+    <button type="button" class="btn btnPdf" *ngIf="!isNewCV" (click)="downloadPDF()">
       PDF İndir
     </button>
   </div>
   <h2 class="text-center my-4">CV Oluşturma</h2>
   <div id="pdf-content" class="form-group">
-    <form #cvForm="ngForm">
-      <div class="firstRow">
-        <div class="col-md-6 col-12"></div>
-        <div class="col-md-6 col-12">
-          <label for="description">Açıklama</label>
-          <input
-            class="form-control"
-            type="text"
-            id="description"
-            [(ngModel)]="description"
-            [ngModelOptions]="{ standalone: true }"
-            required
-          />
-          <div *ngIf="surnameInput.invalid && (surnameInput.dirty || surnameInput.touched)"
-            class="error-message"
-          >
-            Açıklama alanı zorunludur.
-          </div>
-          <br /><br />
+    <form [formGroup]="cvForm" >
+      <div class="firstRow row">
+        <div class="col-md-6 col-12 mb-5">
+          <label for="image">Fotoğraf</label> 
+          <input class="form-control" accept="image/*" name="fileInput" id="fileInput" type="file" (change)="onFileSelected($event)"  [hidden]="uploadedImage"  />
+          <div class="uploaded-image-container">
+            <img *ngIf="uploadedImage" [src]="uploadedImage" alt="Uploaded Image" (click)="openFileInput()">
+            </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md-6">
-          <label for="name">Ad</label>
-          <input
-            class="form-control"
-            type="text"
-            id="name"
-            [(ngModel)]="name"
-            [ngModelOptions]="{ standalone: true }"
-            required
-            #nameInput="ngModel"
-          />
+        <div class="col-md-6 col-12" [class.active]="uploadedImage">
+          <label for="description">Açıklama <span class="required">*</span></label>
+          <input class="form-control" type="text" id="description" name="description" formControlName="description"
+            [ngClass]="{ 'is-invalid': getFormControlDescription('description')?.invalid && getFormControlDescription('description')?.touched }">
           <div
-          *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)"
-            class="error-message"
-          >
-            Ad alanı zorunludur.
+            *ngIf="getFormControlDescription('description')?.invalid && getFormControlDescription('description')?.touched"
+            class="error-message">
+            Lütfen CV'niz için bir açıklama ekleyiniz.
           </div>
-          <br /><br />
-        </div>
 
-        <div class="col-12 col-md-6">
-          <label for="surname">Soyad</label>
-          <input
-            class="form-control"
-            type="text"
-            id="surname"
-            [(ngModel)]="surname"
-            [ngModelOptions]="{ standalone: true }"
-            required
-            #surnameInput="ngModel"
-          />
-          <div
-          *ngIf="surnameInput.invalid && (surnameInput.dirty || surnameInput.touched)"
-            class="error-message"
-          >
-            Soyad alanı zorunludur.
-          </div>
-          <br /><br />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md-6">
-          <label for="title">Unvan</label>
-          <input
-            class="form-control"
-            type="text"
-            id="title"
-            [(ngModel)]="title"
-            [ngModelOptions]="{ standalone: true }"
-            required
-            #titleInput="ngModel"
-          />
-          <div
-          *ngIf="titleInput.invalid && (titleInput.dirty || titleInput.touched)"
-            class="error-message"
-          >
-            Unvan alanı zorunludur.
-          </div>
-          <br /><br />
-        </div>
-        <div class="col-12 col-md-6">
-          <label for="birthDate">Doğum Tarihi</label>
-          <input
-            class="form-control"
-            type="date"
-            id="birthDate"
-            [(ngModel)]="birthDate"
-            [ngModelOptions]="{ standalone: true }"
-            required
-            #birthDateInput="ngModel"
-          />
-          <div *ngIf="birthDateInput.invalid && (birthDateInput.dirty || birthDateInput.touched)"
-            class="error-message"
-          >
-            Doğum tarihi alanı zorunludur.
-          </div>
           <br /><br />
         </div>
       </div>
       <div class="row">
         <div class="col-12 col-md-6 mb-5">
-          <label for="country">Ülke</label>
-          <select
-            class="form-control"
-            id="country"
-            [(ngModel)]="country"
-            [ngModelOptions]="{ standalone: true }"
-            required
-            #countryInput="ngModel"
-          >  
-          <option *ngFor="let country of countries" [value]="country.ulke" [selected]="country.ulke === selectedCountry">{{ country.ulke }}</option>
-
-          </select>
-          <div *ngIf="countryInput.invalid && (countryInput.dirty || countryInput.touched)"
-            class="error-message"
-          >
-            Ülke alanı zorunludur.
+          <label for="name">Ad <span class="required">*</span></label>
+          <input class="form-control" type="text" id="name" name="name" formControlName="name"
+            [ngClass]="{ 'is-invalid': getFormControlName('name')?.invalid && getFormControlName('name')?.touched }">
+          <div *ngIf="getFormControlName('name')?.invalid && getFormControlName('name')?.touched" class="error-message">
+            Lütfen bir isim giriniz.
           </div>
         </div>
+        <br /><br />
+
         <div class="col-12 col-md-6">
+          <label for="surname">Soyad <span class="required">*</span></label>
+          <input class="form-control" type="text" id="surname" name="surname" formControlName="surname"
+            [ngClass]="{ 'is-invalid': getFormControlSurname('surname')?.invalid && getFormControlSurname('surname')?.touched }">
+          <div *ngIf="getFormControlSurname('surname')?.invalid && getFormControlSurname('surname')?.touched"
+            class="error-message">
+            Lütfen bir soyad giriniz.
+          </div>
+          <br /><br />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <label for="title">Unvan <span class="required">*</span></label>
+          <input class="form-control" type="text" id="title" name="title" formControlName="title"
+            [ngClass]="{ 'is-invalid': getFormControlTitle('title')?.invalid && getFormControlTitle('title')?.touched }">
+          <div *ngIf="getFormControlTitle('title')?.invalid && getFormControlTitle('title')?.touched"
+            class="error-message">
+            Lütfen bir unvan adresi giriniz.
+          </div>
+          <br /><br />
+        </div>
+        <div class="col-12 col-md-6">
+          <label for="birthDate">Doğum Tarihi <span class="required">*</span></label>
+          <input class="form-control" type="date" id="birthDate" name="birthDate" formControlName="birthDate"
+            [ngClass]="{ 'is-invalid': getFormControlBirthday('birthDate')?.invalid && getFormControlBirthday('birthDate')?.touched }">
+          <div *ngIf="getFormControlBirthday('birthDate')?.invalid && getFormControlBirthday('birthDate')?.touched"
+            class="error-message">
+            Lütfen bir doğum tarihi giriniz.
+          </div>
+          <br /><br />
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-12 col-md-6 mb-5">
+          <label for="country">Ülke <span class="required">*</span></label>
+          <select class="form-control" id="country" name="country"
+            (change)="onCountrySelected()" formControlName="country"
+            [ngClass]="{ 'is-invalid': getFormControlCountry('country')?.invalid && getFormControlCountry('country')?.touched }">
+
+            <option *ngFor="let country of countries" [value]="country.ulke"
+              [selected]="country.ulke === selectedCountry">
+              {{ country.ulke }}
+            </option>
+          </select>
+          <div *ngIf="getFormControlCountry('country')?.invalid && getFormControlCountry('country')?.touched"
+            class="error-message">
+            Lütfen bir ülke seçiniz.
+          </div>
+        </div>
+        <div class="col-12 col-md-6 mb-5">
           <label for="city">Şehir</label>
-          <select
-            class="form-control"
-            id="city"
-            [(ngModel)]="city"
-            [ngModelOptions]="{ standalone: true }"
-          >
+          <select class="form-control" id="city" formControlName="city" name="city">
             <option *ngFor="let city of cities" [value]="city.il">
               {{ city.il }}
             </option>
           </select>
         </div>
       </div>
-      <label for="email">E-posta</label>
-      <input
-        class="form-control"
-        type="email"
-        id="email"
-        [(ngModel)]="email"
-        [ngModelOptions]="{ standalone: true }"
-        required
-        #emailInput="ngModel"
-      />
-      <div
-      *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-message"
-      >
-        E-posta alanı zorunludur.
+      <label for="email">E-posta <span class="required">*</span></label>
+      <input class="form-control" type="email" id="email" name="email" formControlName="email"
+        [ngClass]="{ 'is-invalid': getFormControlEmail('email')?.invalid && getFormControlEmail('email')?.touched }">
+      <div *ngIf="getFormControlEmail('email')?.invalid && getFormControlEmail('email')?.touched" class="error-message">
+        Lütfen bir e-posta adresi giriniz.
       </div>
+
       <br /><br />
 
-      <label for="education">Eğitim Bilgisi</label>
-      <textarea
-        class="form-control"
-        id="education"
-        [(ngModel)]="education"
-        [ngModelOptions]="{ standalone: true }"
-        required
-        #educationInput="ngModel"
-      >
-          <div *ngIf="educationInput.invalid && (educationInput.dirty || educationInput.touched)"
-            class="error-message"
-          >
-            Eğitim Bilgisi girmek zorunludur.
-          </div> </textarea
-      ><br /><br />
+      <label for="education">Eğitim Bilgisi <span class="required">*</span></label>
+      <textarea class="form-control" id="education" name="education" formControlName="education"
+        [ngClass]="{ 'is-invalid': getFormControlEducation('education')?.invalid && getFormControlEducation('education')?.touched }">
+     </textarea>
+      <div *ngIf="getFormControlEducation('education')?.invalid && getFormControlEducation('education')?.touched"
+        class="error-message">
+        Lütfen eğitim bilgilerinizi giriniz.
+      </div>
+      <br /><br />
+      <label for="experience">İş Deneyimleri <span class="required">*</span></label>
+      <textarea class="form-control" id="experience" name="experience" formControlName="experience"
+        [ngClass]="{ 'is-invalid': getFormControlExperience('experience')?.invalid && getFormControlExperience('experience')?.touched }">
+     </textarea>
+      <div *ngIf="getFormControlExperience('experience')?.invalid && getFormControlExperience('experience')?.touched"
+        class="error-message">
+        Lütfen iş deneyimlerinizi giriniz. 
+      </div>
 
-      <label for="experience">İş Deneyimleri</label>
-      <textarea
-        class="form-control"
-        id="experience"
-        [(ngModel)]="experience"
-        [ngModelOptions]="{ standalone: true }"
-        required
-        #experienceInput="ngModel"
-      >
-          <div *ngIf="experienceInput.invalid && (experienceInput.dirty || experienceInput.touched)"
-            class="error-message"
-          >
-            Deneyim alanı zorunludur.
-          </div> </textarea
-      ><br /><br />
+      <br /><br />
+      <label for="skills">Yetenekler <span class="required">*</span></label>
+      <textarea class="form-control" id="skills" name="skills" formControlName="skills"
+        [ngClass]="{ 'is-invalid': getFormControlSkills('skills')?.invalid && getFormControlSkills('skills')?.touched }">
 
-      <label for="skills">Yetenekler</label>
-      <textarea
-        class="form-control"
-        id="skills"
-        [(ngModel)]="skills"
-        [ngModelOptions]="{ standalone: true }"
-        required
-        #skillsInput="ngModel"
-      >
-          <div *ngIf="skillsInput.invalid && (skillsInput.dirty || skillsInput.touched)" class="error-message"
-          >
-            Yetenekler alanı zorunludur.
-          </div> </textarea
-      ><br /><br />
-      <button class="btn" (click)="saveCV()" [disabled]="cvForm.invalid">Kaydet</button>
+         </textarea>
+      <div *ngIf="getFormControlSkills('skills')?.invalid && getFormControlSkills('skills')?.touched"
+        class="error-message">
+        Lütfen yeteneklerinizi giriniz.
+      </div>
+      <br /><br />
+      <button class="btn btnSave" *ngIf="isNewCV" (click)="saveCV()" [disabled]="cvForm.invalid">
+        Kaydet
+      </button>
+      <button class="btn btnSave" *ngIf="!isNewCV" (click)="updateCV()" [disabled]="cvForm.invalid">
+        Güncelle
+      </button>
     </form>
   </div>
 </div>

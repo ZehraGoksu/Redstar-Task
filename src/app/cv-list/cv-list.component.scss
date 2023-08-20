@@ -2,8 +2,7 @@
 
 .container {
     padding: 30px 10px;
-    color:$textColor;
-    
+    color:$textColor; 
 
   .title {
     margin-bottom: 30px;
@@ -23,7 +22,7 @@
     align-items: center;
     padding: 5px 15px;
     border-radius: 20px;
-    box-shadow: 2px 4px 10px rgb(0, 0,0.1);
+    box-shadow: 2px 4px 15px rgb(0, 0,0.1);
     background: $darkGreen;
     color: white;
     font-size: 18px;
@@ -54,4 +53,12 @@
   .buttons {
     gap: 3;
   }
+}
+
+@media (min-width: 0px)  and (max-width: $xs) {
+  
+.container { 
+  .list-card { 
+    padding: 20px 8px;
+  }}
 }
